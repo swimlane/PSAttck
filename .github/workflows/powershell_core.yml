@@ -1,0 +1,21 @@
+name: PowerShell Core
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: [windows-latest, ubuntu-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Running Tests
+      run: |
+        Install-Module -Name Pester -Force
+        ./Tests/PSAttck.Tests.ps1
+      shell: pwsh

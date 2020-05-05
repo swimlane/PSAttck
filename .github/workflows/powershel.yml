@@ -1,0 +1,19 @@
+name: Windows PowerShell
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Running Tests
+      run: |
+        Install-Module -Name Pester -Force  
+        .\Tests\PSAttck.Tests.ps1
+      shell: powershell
