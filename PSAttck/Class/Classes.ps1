@@ -568,6 +568,7 @@ class EnterpriseTool : Enterprise {
     ${Version Reviewed}
     $Windows
     ${Working Hours}
+    $NetWitness
     static hidden $generatedDataSet
 
 

@@ -11,7 +11,7 @@
     # Script module or binary module file associated with this manifest.
     RootModule = 'PSAttck.psm1'
     # Version number of this module.
-    ModuleVersion = '1.0.3'
+    ModuleVersion = '1.0.4'
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
     # ID used to uniquely identify this module

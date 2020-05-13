@@ -2,13 +2,11 @@
 <Configuration>
     <ViewDefinitions>
     <View>
-            <Name>Default</Name>
+            <Name>Actor</Name>
             <ViewSelectedBy>
                 <TypeName>PSAttck.Enterprise.Actor</TypeName>
                 <TypeName>PSAttck.Enterprise.Malware</TypeName>
-                <TypeName>PSAttck.Enterprise.Mitigation</TypeName>
                 <TypeName>PSAttck.Enterprise.Tactic</TypeName>
-                <TypeName>PSAttck.Enterprise.Technique</TypeName>
                 <TypeName>PSAttck.Enterprise.Tool</TypeName>
             </ViewSelectedBy>
             <TableControl>
@@ -17,10 +15,10 @@
                         <Width>6</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>60</Width>
+                        <Width>20</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>60</Width>
+                        <Width>30</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
                         <Width>80</Width>
@@ -46,6 +44,40 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
+        <View>
+            <Name>Mitigation</Name>
+            <ViewSelectedBy>
+                <TypeName>PSAttck.Enterprise.Mitigation</TypeName>
+                <TypeName>PSAttck.Enterprise.Technique</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Width>6</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>60</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>80</Width>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Id</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Description</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
     </ViewDefinitions>
 </Configuration>
