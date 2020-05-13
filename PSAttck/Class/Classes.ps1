@@ -626,7 +626,12 @@ class EnterpriseTool : Enterprise {
                             if ($item -eq 'Name'){
                                 $this.$('c2'+$item) = $_.$item
                             }
-                           $this.$($item) = $_.$item
+                            try{
+                                $this.$($item) = $_.$item
+                            }
+                            catch{
+                                Write-Debug -Message "Unable to find property $item but ignoring for now"
+                            }
                         }
                     $returnObject.Add($_)
                     }
