@@ -15,6 +15,9 @@
 .EXAMPLE
     Retrieve which techniques apply to a specific Mitigation
     C:/> (Get-AttckMitigation -Name 'Account Discovery Mitigation').Techniques()
+.EXAMPLE
+    Retrieve a Mitigation by Id
+    C:/> Get-AttckMitigation -Id 'M1016'
 .OUTPUTS
     PSAttck.Enterprise.Mitigation
 .NOTES
@@ -33,6 +36,15 @@ function Get-AttckMitigation {
                    ParameterSetName='mitigation')]
         [string]
         $Name
+        ,
+
+        # Get a Mitigation object by id
+        [Parameter(Mandatory=$false,
+                   Position=1,
+                   ValueFromPipeline=$true,
+                   ParameterSetName='mitigation')]
+        [string]
+        $Id
     )
 
     begin {
@@ -45,6 +57,13 @@ function Get-AttckMitigation {
                 if ($PSBoundParameters.ContainsKey('Name')){
                     if ($_.name -eq $Name){
                         [EnterpriseMitigation]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Mitigation
+                    }
+                }
+                elseif ($PSBoundParameters.ContainsKey('Id')){
+                    foreach ($ref in $_.external_references){
+                        if ($ref.source_name -eq 'mitre-attack' -and $ref.external_id -eq $Id){
+                            [EnterpriseMitigation]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Mitigation
+                        }
                     }
                 }
                 else{

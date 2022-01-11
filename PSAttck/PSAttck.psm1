@@ -84,66 +84,21 @@ $attckFilterValueScriptBlock = {
 
 Register-ArgumentCompleter -CommandName Get-Attck -ParameterName Value -ScriptBlock $attckFilterValueScriptBlock
 
-$AttckActorScriptBlock = {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+$methods = @('Get-AttckTool', 'Get-AttckTechnique', 'Get-AttckTactic', 'Get-AttckMitigation', 'Get-AttckMalware', 'Get-AttckActor')
 
-    (Get-AttckActor).Name.ForEach({
-        "'" + $_ + "'"
-    })
+foreach ($method in $methods){
+    $properties = @('Name', 'Id')
+    foreach ($prop in $properties){
+        ${"($method)NameScriptBlock"} = {
+            param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+        
+            (& $method)."$prop".ForEach({
+                "'" + $_ + "'"
+            })
+        }.GetNewClosure()
+        Register-ArgumentCompleter -CommandName $method -ParameterName $prop -ScriptBlock ${"($method)NameScriptBlock"}
+    }
 }
-
-Register-ArgumentCompleter -CommandName Get-AttckActor -ParameterName Name -ScriptBlock $AttckActorScriptBlock
-
-$AttckMalwareScriptBlock = {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-
-    (Get-AttckMalware).Name.ForEach({
-        "'" + $_ + "'"
-    })
-}
-
-Register-ArgumentCompleter -CommandName Get-AttckMalware -ParameterName Name -ScriptBlock $AttckMalwareScriptBlock
-
-$AttckMitigationScriptBlock = {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-
-    (Get-AttckMitigation).Name.ForEach({
-        "'" + $_ + "'"
-    })
-}
-
-Register-ArgumentCompleter -CommandName Get-AttckMitigation -ParameterName Name -ScriptBlock $AttckMitigationScriptBlock
-
-$AttckTacticScriptBlock = {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-
-    (Get-AttckTactic).Name.ForEach({
-        "'" + $_ + "'"
-    })
-}
-
-Register-ArgumentCompleter -CommandName Get-AttckTactic -ParameterName Name -ScriptBlock $AttckTacticScriptBlock
-
-$AttckTechniqueScriptBlock = {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-
-    (Get-AttckTechnique).Name.ForEach({
-        "'" + $_ + "'"
-    })
-}
-
-Register-ArgumentCompleter -CommandName Get-AttckTechnique -ParameterName Name -ScriptBlock $AttckTechniqueScriptBlock
-
-$attckToolScriptBlock = {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-
-    (Get-AttckTool).Name.ForEach({
-        "'" + $_ + "'"
-    })
-}
-
-Register-ArgumentCompleter -CommandName Get-AttckTool -ParameterName Name -ScriptBlock $attckToolScriptBlock
-
 
 Export-ModuleMember -Variable PSAttckJson
 Export-ModuleMember -Function $Public.Basename

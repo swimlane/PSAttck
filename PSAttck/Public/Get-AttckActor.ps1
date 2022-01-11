@@ -21,6 +21,9 @@
 .EXAMPLE 
     Retrieve a specific Actors Tools
     C:/> (Get-AttckActor -Name 'APT1').Tools()
+.EXAMPLE
+    Retrieve a Actor by Id
+    C:/> Get-AttckMitigation -Id 'G0112'
 .OUTPUTS
     PSAttck.Enterprise.Actor
 .NOTES
@@ -38,7 +41,23 @@ function Get-AttckActor {
                    ValueFromPipeline=$true,
                    ParameterSetName='actor')]
         [string]
-        $Name
+        $Name,
+
+        # Get a Actor object by id
+        [Parameter(Mandatory=$false,
+                   Position=1,
+                   ValueFromPipeline=$true,
+                   ParameterSetName='actor')]
+        [string]
+        $Id,
+
+        # Display revoked actors
+        [Parameter(Mandatory=$false,
+                   Position=2,
+                   ValueFromPipeline=$true,
+                   ParameterSetName='technique')]
+        [switch]
+        $ShowRevoked=$false
     )
 
     begin {
@@ -47,10 +66,17 @@ function Get-AttckActor {
 
     process {
         $PSAttckJson.objects.ForEach({
-            if($_.type -eq 'intrusion-set'){
+            if($_.type -eq 'intrusion-set' -and ($_.revoked -eq $ShowRevoked -or -not($_.revoked))){
                 if ($PSBoundParameters.ContainsKey('Name')){
                     if ($_.name -eq $Name){
                         [EnterpriseActor]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Actor
+                    }
+                }
+                elseif ($PSBoundParameters.ContainsKey('Id')){
+                    foreach ($ref in $_.external_references){
+                        if ($ref.source_name -eq 'mitre-attack' -and $ref.external_id -eq $Id){
+                            [EnterpriseActor]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Actor
+                        }
                     }
                 }
                 else{

@@ -19,14 +19,15 @@ function Get-PSAttckConfiguration {
 
     begin {
         Write-Verbose -Message 'Getting PSAttck Configuration'
+        $defaultPath = "$HOME/PSAttck/config.json"
     }
 
     process {
-        if (-not (Get-ChildItem -Path "$HOME/PSAttck/config.json" -ErrorAction SilentlyContinue)){
-            Write-Warning -Message "PSAttck config.json cannot be found at the following location: $HOME/PSAttck/config.json"
+        if (-not (Get-ChildItem -Path $defaultPath -ErrorAction SilentlyContinue)){
+            Write-Warning -Message "PSAttck config.json cannot be found at the following location: $defaultPath"
         }
         else{
-            Get-Content -Path "$HOME/PSAttck/config.json" | ConvertFrom-Json
+            Get-Content -Path $defaultPath | ConvertFrom-Json
         }
     }
 

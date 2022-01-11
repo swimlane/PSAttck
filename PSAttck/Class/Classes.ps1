@@ -4,7 +4,8 @@ class PSAttck {
 class Enterprise : PSAttck  {
     [String] $Id
     [String] $Name
-    [String] $Aliases
+    [System.Collections.ArrayList] $Aliases
+    [System.Collections.ArrayList] $Alias
     [String] $Description
     [PSCustomObject] $Reference
     [String] $Created
@@ -38,7 +39,8 @@ class Enterprise : PSAttck  {
 
         $this.Id   = $this.SetIdAttribute($attckObj)
         $this.Name = $this.SetAttribute($attckObj,'name')
-        $this.Aliases = $this.SetListAttribute($attckObj, 'aliases')
+     #   $this.Alias = $this.SetAliasAttribute($attckObj)
+      #  $this.Aliases = $this.Alias
         $this.Description = $this.SetAttribute($attckObj, 'description')
         $this.Reference = $this.SetReferenceAttribute($attckObj)
         $this.Created = $this.SetDateTimeAttribute($attckObj, 'created')
@@ -64,6 +66,21 @@ class Enterprise : PSAttck  {
             Write-Error -ErrorRecord $Error[0] -RecommendedAction 'Unable to set Mitre ATT&CK ID Attribute'
         }
         return $null
+    }
+
+    [System.Collections.ArrayList] hidden SetAliasAttribute ($obj){
+        $returnObject = [System.Collections.ArrayList]::new()
+        if ($obj."aliases"){
+            foreach ($item in $obj."aliases"){
+                $returnObject.Add($item)
+            }
+        }
+        if ($obj."x_mitre_aliases"){
+            foreach ($item in $obj."x_mitre_aliases"){
+                $returnObject.Add($item)
+            }
+        }
+        return $returnObject
     }
 
     [System.Collections.ArrayList] hidden SetListAttribute ($obj, [string] $name){
@@ -435,7 +452,8 @@ class EnterpriseTechnique : Enterprise {
         $this.Remote = $this.SetAttribute($JsonObject, 'x_mitre_remote_support')
         $this.SystemRequirements = $this.SetAttribute($JsonObject, 'x_mitre_system_requirements')
         $this.Detection = $this.SetAttribute($JsonObject, 'x_mitre_detection')
-        $this.DataSource = $this.SetListAttribute($JsonObject, 'x_mitre_data_sources')
+        $this.DataSource = $this.GetDataSourcesDict($JsonObject.x_mitre_data_sources)
+        #$this.SetListAttribute($JsonObject, 'x_mitre_data_sources')
 
         $this.SetTactic($JsonObject)
 
@@ -446,6 +464,19 @@ class EnterpriseTechnique : Enterprise {
         $this.RawDetections = $this.GetFilteredDataset('possible_detections')
     }
 
+    [PSCustomObject] hidden GetDataSourcesDict($obj){
+        $returnObj = @{}
+        foreach ($item in $obj){
+            if ($item -contains ':'){
+                $tempDataSource = $item.split(':')
+                if(-not ($returnObj.ContainsKey($tempDataSource[0]))){
+                    $returnObj[$tempDataSource[0]] = @()
+                }
+                $returnObj[$tempDataSource[0]] += $tempDataSource[1]
+            }
+        }
+        return $returnObj
+    }
     [System.Collections.ArrayList] hidden GetFilteredDataset($attribute){
         $returnObject = [System.Collections.ArrayList]::new()
         [EnterpriseTechnique]::generatedDataSet.techniques.ForEach({
@@ -606,7 +637,7 @@ class EnterpriseTool : Enterprise {
 
     [System.Collections.ArrayList] hidden GetC2Dataset(){
         $returnObject = [System.Collections.ArrayList]::new()
-      
+
         $tools = @()
         [EnterpriseTool]::generatedDataSet.c2_data.ForEach({
             $tools += ($_ | Get-Member -MemberType NoteProperty | Select-Object Name).Name
@@ -619,7 +650,6 @@ class EnterpriseTool : Enterprise {
                 [EnterpriseTool]::generatedDataSet.c2_data.$_.ForEach({
                     ($_ | Get-Member -MemberType NoteProperty | Select-Object Name).Name.ForEach({
                         $props += $_
-                    # $_
                     })
                     if ($props){
                         foreach ($item in $props){

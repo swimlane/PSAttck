@@ -44,7 +44,7 @@ function Get-AttckDataFiles {
 
     begin {
         $attckJsonUrl = 'https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json'
-        $attckDatasetUrl = 'https://raw.githubusercontent.com/swimlane/pyattck/master/generated_attck_data.json'
+        $attckDatasetUrl = 'https://swimlane-pyattck.s3.us-west-2.amazonaws.com/generated_attck_data.json'
 
         $attckJsonPath = "$env:HOME\PSAttck\AttckJson.json"
         $attckDatasetPath = "$env:HOME\PSAttck\AttckDataset.json"
@@ -62,10 +62,22 @@ function Get-AttckDataFiles {
                 if (-Not(Get-ChildItem -Path $config.AttckJsonPath -ErrorAction SilentlyContinue)){
                     New-Item -Path $config.AttckJsonPath -ItemType File -Force -ErrorAction SilentlyContinue | Out-Null
                     Invoke-RestMethod -Uri $attckJsonUrl -OutFile $config.AttckJsonPath | Out-Null
-                    Get-Content -Path $config.AttckJsonPath | ConvertFrom-Json | Write-Output
+                    try{
+                        Get-Content -Path $config.AttckJsonPath | ConvertFrom-Json | Write-Output
+                    }
+                    catch{
+                        Set-PSAttckConfiguration -AttckJsonPath $config.AttckJsonPath
+                        Get-Content -Path $config.AttckJsonPath | ConvertFrom-Json | Write-Output
+                    }
                 }
                 else{
-                    Get-Content -Path $config.AttckJsonPath | ConvertFrom-Json | Write-Output
+                    try{
+                        Get-Content -Path $config.AttckJsonPath | ConvertFrom-Json | Write-Output
+                    }
+                    catch{
+                        Set-PSAttckConfiguration -AttckJsonPath $config.AttckJsonPath
+                        Get-Content -Path $config.AttckJsonPath | ConvertFrom-Json | Write-Output
+                    }
                 }
             }
             else{
@@ -74,10 +86,23 @@ function Get-AttckDataFiles {
                 if (-Not(Get-ChildItem -Path $config.AttckDatasetPath -ErrorAction SilentlyContinue)){
                     New-Item -Path $config.AttckDatasetPath -ItemType File -Force -ErrorAction SilentlyContinue | Out-Null
                     Invoke-RestMethod -Uri $attckDatasetUrl -OutFile $config.AttckDatasetPath | Out-Null
-                    Get-Content -Path $config.AttckDatasetPath | ConvertFrom-Json | Write-Output
+                    try{
+                        Get-Content -Path $config.AttckDatasetPath | ConvertFrom-Json | Write-Output
+                    }
+                    catch{
+                        Set-PSAttckConfiguration -AttckDatasetPath $config.AttckDatasetPath
+                        Get-Content -Path $config.AttckDatasetPath | ConvertFrom-Json | Write-Output
+                    }
                 }
                 else{
-                    Get-Content -Path $config.AttckDatasetPath | ConvertFrom-Json | Write-Output
+                    try{
+                        Get-Content -Path $config.AttckDatasetPath | ConvertFrom-Json | Write-Output
+                    }
+                    catch{
+                        Set-PSAttckConfiguration -AttckDatasetPath $config.AttckDatasetPath
+                        $config
+                        Get-Content -Path $config.AttckDatasetPath | ConvertFrom-Json | Write-Output
+                    }
                 }
             }
         }

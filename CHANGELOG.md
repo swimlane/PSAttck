@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2021-01-11
+
+    - Updated to latest JSON files
+    - Added argument completers for all functions and their input parameters
+    - Added Id input parameter to all functions
+
 ## [1.0.3] - 2020-05-05
     
     - Identified an additional bug with argument completers and resolved

@@ -15,6 +15,9 @@
 .EXAMPLE
     Retrieve which techniques are associated with a Tactic
     C:/> (Get-AttckTactic -Name 'Collection').Techniques()
+.EXAMPLE
+    Retrieve a Tactic by Id
+    C:/> Get-AttckTactic -Id 'TA0009'
 .OUTPUTS
     PSAttck.Enterprise.Tactic
 .NOTES
@@ -32,7 +35,15 @@ function Get-AttckTactic {
                    ValueFromPipeline=$true,
                    ParameterSetName='tactic')]
         [string]
-        $Name
+        $Name,
+
+        # Get a Tactic object by id
+        [Parameter(Mandatory=$false,
+                   Position=1,
+                   ValueFromPipeline=$true,
+                   ParameterSetName='tactic')]
+        [string]
+        $Id
     )
 
     begin {
@@ -45,6 +56,13 @@ function Get-AttckTactic {
                 if ($PSBoundParameters.ContainsKey('Name')){
                     if ($_.name -eq $Name){
                         [EnterpriseTactic]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Tactic
+                    }
+                }
+                elseif ($PSBoundParameters.ContainsKey('Id')){
+                    foreach ($ref in $_.external_references){
+                        if ($ref.source_name -eq 'mitre-attack' -and $ref.external_id -eq $Id){
+                            [EnterpriseTactic]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Tactic
+                        }
                     }
                 }
                 else{
