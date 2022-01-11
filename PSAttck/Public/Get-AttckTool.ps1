@@ -18,6 +18,9 @@
 .EXAMPLE
     Retrieve actors who are known to use a given Tool
     C:/> (Get-AttckTool -Name 'Arp').Actors()
+.EXAMPLE
+    Retrieve an Actor by Id
+    C:/> Get-AttckTool -Id 'S0106'
 .OUTPUTS
     PSAttck.Enterprise.Tool
 .NOTES
@@ -35,7 +38,15 @@ function Get-AttckTool {
                    ValueFromPipeline=$true,
                    ParameterSetName='tool')]
         [string]
-        $Name
+        $Name,
+
+        # Get a Tool object by id
+        [Parameter(Mandatory=$false,
+                   Position=1,
+                   ValueFromPipeline=$true,
+                   ParameterSetName='tool')]
+        [string]
+        $Id
     )
 
     begin {
@@ -48,6 +59,13 @@ function Get-AttckTool {
                 if ($PSBoundParameters.ContainsKey('Name')){
                     if ($_.name -eq $Name){
                         [EnterpriseTool]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Tool
+                    }
+                }
+                elseif ($PSBoundParameters.ContainsKey('Id')){
+                    foreach ($ref in $_.external_references){
+                        if ($ref.source_name -eq 'mitre-attack' -and $ref.external_id -eq $Id){
+                            [EnterpriseTool]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Tool
+                        }
                     }
                 }
                 else{

@@ -21,6 +21,9 @@
 .EXAMPLE
     Retrieve mitigation for a given Technique
     C:/> (Get-AttckTechnique -Name 'Audio Capture').Mitigations()
+.EXAMPLE
+    Retrieve a Technique by Id
+    C:/> Get-AttckTechnique -Id 'T1203'
 .OUTPUTS
     PSAttck.Enterprise.Technique
 .NOTES
@@ -38,7 +41,23 @@ function Get-AttckTechnique {
                    ValueFromPipeline=$true,
                    ParameterSetName='technique')]
         [string]
-        $Name
+        $Name,
+
+        # Get a Technique object by id
+        [Parameter(Mandatory=$false,
+                   Position=1,
+                   ValueFromPipeline=$true,
+                   ParameterSetName='technique')]
+        [string]
+        $Id,
+
+        # Display revoked techniques
+        [Parameter(Mandatory=$false,
+                   Position=2,
+                   ValueFromPipeline=$true,
+                   ParameterSetName='technique')]
+        [switch]
+        $ShowRevoked=$false
     )
 
     begin {
@@ -47,10 +66,17 @@ function Get-AttckTechnique {
 
     process {
         $PSAttckJson.objects.ForEach({
-            if($_.type -eq 'attack-pattern'){
+            if($_.type -eq 'attack-pattern' -and ($_.revoked -eq $ShowRevoked -or -not($_.revoked))){
                 if ($PSBoundParameters.ContainsKey('Name')){
                     if ($_.name -eq $Name){
                         [EnterpriseTechnique]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Technique
+                    }
+                }
+                elseif ($PSBoundParameters.ContainsKey('Id')){
+                    foreach ($ref in $_.external_references){
+                        if ($ref.source_name -eq 'mitre-attack' -and $ref.external_id -eq $Id){
+                            [EnterpriseTechnique]::new($_) | Add-ObjectDetail -TypeName PSAttck.Enterprise.Technique
+                        }
                     }
                 }
                 else{

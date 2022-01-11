@@ -5,13 +5,15 @@
 #
 # Generated on: 02/20/2020
 #
+# Updated on: 01/11/2022
+#
 
 @{
 
     # Script module or binary module file associated with this manifest.
     RootModule = 'PSAttck.psm1'
     # Version number of this module.
-    ModuleVersion = '1.0.5'
+    ModuleVersion = '2.0.0'
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
     # ID used to uniquely identify this module
@@ -21,11 +23,11 @@
     # Company or vendor of this module
     CompanyName = 'Swimlane'
     # Copyright statement for this module
-    Copyright = '(c) 2020 Swimlane. All rights reserved.'
+    Copyright = '(c) 2022 Swimlane. All rights reserved.'
     # Description of the functionality provided by this module
     Description = 'PSAttck is a PowerShell Module that interacts Mitre ATT&CK Framework'
     # Minimum version of the PowerShell engine required by this module
-    PowerShellVersion = '5.1'
+    PowerShellVersion = '7.0'
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
     ScriptsToProcess = @('Class/Classes.ps1')
     # Format files (.ps1xml) to be loaded when importing this module
@@ -62,7 +64,7 @@
              # A URL to an icon representing this module.
              # IconUri = ''
              # ReleaseNotes of this module
-             ReleaseNotes = 'PSAttck is a PowerShell Module that interacts Mitre ATT&CK Framework'
+             ReleaseNotes = 'Updated to the latest version of our ATT&CK Generated Dataset and added new arugment completers'
         } # End of PSData hashtable
     } # End of PrivateData hashtable
     # HelpInfo URI of this module
